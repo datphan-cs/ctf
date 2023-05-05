@@ -1,0 +1,10 @@
+import string
+dictionary = string.ascii_uppercase + string.digits + '_'
+with open("message.txt", "r") as file:
+    num_list = file.readline().split(" ")[:-1]
+    
+num_list = list(map(lambda x: int(x)%37, num_list))
+
+flag = ''.join(dictionary[num] for num in num_list)
+
+print(f"picoCTF{{{flag}}}")
