@@ -1,26 +1,32 @@
 import string
 
-LOWERCASE_OFFSET = ord("a")
+OFFSET = ord("a")
 ALPHABET = string.ascii_lowercase[:16]
 
-def b16_encode(plain):
-	enc = ""
-	for c in plain:
-		binary = "{0:08b}".format(ord(c))
-		enc += ALPHABET[int(binary[:4], 2)]
-		enc += ALPHABET[int(binary[4:], 2)]
-	return enc
+
+def b16_decode(cipher):
+    plain = ""
+    for i in range (0, len(cipher),2):
+        first = ord(cipher[i]) - OFFSET
+        second = ord(cipher[i+1]) - OFFSET
+        binary = "{0:04b}".format(first) + "{0:04b}".format(second) 
+        plain += chr(int(binary, 2)) 
+    return plain
 
 def shift(c, k):
-	t1 = ord(c) - LOWERCASE_OFFSET
-	t2 = ord(k) - LOWERCASE_OFFSET
-	return ALPHABET[(t1 + t2) % len(ALPHABET)]
+    t1 = ord(c) - OFFSET
+    t2 = ord(k) - OFFSET
+    return ALPHABET[(t1 + t2) % len(ALPHABET)]
 
-enc_flag = "kjlijdliljhdjdhfkfkhhjkkhhkihlhnhghekfhmhjhkhfhekfkkkjkghghjhlhghmhhhfkikfkfhm"
-key = "redacted"
+ciphertext = "kjlijdliljhdjdhfkfkhhjkkhhkihlhnhghekfhmhjhkhfhekfkkkjkghghjhlhghmhhhfkikfkfhm"
 
-b16 = b16_encode(flag)
-enc = ""
-for i, c in enumerate(b16):
-	enc += shift(c, key[i % len(key)])
-print(enc)
+for key in ALPHABET:
+    possible_flag = ""
+    for c in ciphertext:
+        possible_flag += shift(c, key)
+        
+    possible_flag = b16_decode(possible_flag)
+    
+    if possible_flag.isprintable():
+        print(possible_flag)
+
